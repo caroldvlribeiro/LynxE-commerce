@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f2c230">
+    <meta name="description" content="Linx: praticidade e boas escolhas para acompanhar a sua rotina.">
+    <title>Linx — boas escolhas para o seu dia</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="/styles.css?v=linx-dialog-1">
+    <script src="/app.js?v=linx-scroll-1" defer></script>
+  </head>
+  <body>
+    <header class="site-header" id="site-header">
+      <a class="brand" href="/" aria-label="Linx, início">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 36 36"><path d="M12 12 24 24M24 12 12 24"></path></svg></span>
+        <span class="brand-wordmark">Linx<span class="brand-dot">.</span></span>
+      </a>
+      <nav class="main-nav" aria-label="Navegação principal">
+        <button class="nav-link active" type="button" data-view="catalog" aria-current="page">Loja</button>
+        <button class="nav-link" id="orders-nav" type="button" data-view="orders" hidden>Meus pedidos</button>
+        <button class="nav-link" id="manage-nav" type="button" data-view="manage" hidden>Gerenciar</button>
+        <button class="nav-link" id="profile-nav" type="button" data-view="profile" hidden>Meu perfil</button>
+      </nav>
+      <div class="account-actions">
+        <span id="account-name" hidden></span>
+        <button class="text-button" id="login-open" type="button">Entrar</button>
+        <button class="text-button" id="register-open" type="button">Criar conta</button>
+        <button class="text-button" id="logout-button" type="button" hidden>Sair</button>
+      </div>
+      <button class="cart-button" id="open-cart" type="button" aria-label="Abrir carrinho" hidden>
+        <svg class="cart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.2 11.1a2 2 0 0 0 2 1.6h8.5a2 2 0 0 0 2-1.6L21 8H6"></path><circle cx="10" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle></svg>
+        <span class="cart-label">Sacola</span>
+        <span class="cart-count" id="cart-count">0</span>
+      </button>
+    </header>
+
+    <main>
+      <div class="notice" id="notice" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+
+      <section class="view active" id="catalog-view">
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="eyebrow-line"></span> Seu dia merece ser mais simples</p>
+            <h1>Encontre o que<br><em>faz bem pra você.</em></h1>
+            <p class="hero-description">Na Linx, praticidade e boas escolhas se encontram. Descubra produtos para acompanhar a sua rotina.</p>
+            <a class="button button-dark hero-cta" href="#catalog">Explorar produtos <span aria-hidden="true">↘</span></a>
+          </div>
+          <div class="hero-art" aria-label="Composição ilustrada de produtos">
+            <div class="art-sun"></div>
+            <div class="art-plant"><i></i><i></i><i></i><b></b></div>
+            <div class="art-vase"></div>
+            <div class="art-book art-book-one"></div>
+            <div class="art-book art-book-two"></div>
+            <span class="art-caption">um jeito mais simples</span>
+          </div>
+          <div class="hero-index"><span>01</span><i></i><span>03</span></div>
+        </section>
+
+        <section class="catalog-section section-wrap" id="catalog">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Seleção Linx</p>
+              <h2>Descubra algo novo</h2>
+            </div>
+            <p class="section-note">Produtos úteis e boas descobertas para fazer parte da sua rotina.</p>
+          </div>
+          <div class="catalog-toolbar">
+            <label class="search-box">
+              <span aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 4.5 4.5"></path></svg></span>
+              <input id="search-input" type="search" placeholder="Ex.: caneca, mochila..." aria-label="Buscar produtos por nome" autocomplete="off">
+            </label>
+            <label class="filter-label" for="category-filter">Categoria</label>
+            <select id="category-filter">
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <p class="catalog-feedback" id="catalog-feedback" role="status" aria-live="polite"></p>
+          <div class="product-grid" id="product-grid" aria-live="polite" aria-busy="false"></div>
+          <div class="empty-state" id="catalog-empty" hidden>
+            <p>Nenhum produto encontrado com esses filtros.</p>
+            <button class="button button-quiet" id="clear-catalog-filters" type="button">Limpar busca e filtros</button>
+          </div>
+        </section>
+
+        <section class="values-strip">
+          <div><span class="value-icon">01</span><p><strong>Boas escolhas</strong><br>Produtos para acompanhar o seu dia.</p></div>
+          <div><span class="value-icon">02</span><p><strong>Compra sem complicação</strong><br>Uma experiência simples, do início ao pedido.</p></div>
+          <div><span class="value-icon">03</span><p><strong>Do seu jeito</strong><br>Encontre o que combina com a sua rotina.</p></div>
+        </section>
+      </section>
+
+      <section class="view section-wrap subpage" id="orders-view" hidden>
+        <div class="section-heading">
+          <div><p class="eyebrow">Sua jornada Linx</p><h2>Meus pedidos</h2></div>
+          <p class="section-note">Acompanhe seus pedidos e consulte os itens comprados.</p>
+        </div>
+        <div class="orders-list" id="orders-list"></div>
+        <div class="empty-state" id="orders-empty" hidden>
+          <p>Você ainda não fez nenhum pedido.</p>
+          <button class="button button-quiet" type="button" data-view="catalog">Explorar produtos</button>
+        </div>
+      </section>
+
+      <section class="view section-wrap subpage" id="profile-view" hidden>
+        <div class="section-heading">
+          <div><p class="eyebrow">Sua conta Linx</p><h2>Meu perfil</h2></div>
+          <p class="section-note">Seus dados e tipo de acesso.</p>
+        </div>
+        <div class="profile-layout">
+          <section class="panel profile-panel">
+            <div class="panel-heading">
+              <div><p class="eyebrow">Dados da conta</p><h3>Informações pessoais</h3></div>
+              <span class="role-badge" id="profile-role"></span>
+            </div>
+            <p class="profile-created">Conta Linx desde <strong id="profile-created-at"></strong></p>
+            <form id="profile-form" class="form-grid profile-form">
+              <label>Nome completo<input id="profile-full-name" name="full_name" autocomplete="name" minlength="2" maxlength="120" placeholder="Ex.: Ana da Silva" required></label>
+              <label>E-mail<input id="profile-email" name="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" required></label>
+              <button class="button button-dark" type="submit">Salvar informações</button>
+            </form>
+          </section>
+
+          <section class="panel profile-panel" id="seller-profile-card" hidden>
+            <div class="panel-heading">
+              <div><p class="eyebrow">Sua vitrine Linx</p><h3>Perfil da loja</h3></div>
+            </div>
+            <div class="profile-stats">
+              <div><strong id="seller-product-count">0</strong><span>Produtos cadastrados</span></div>
+              <div><strong id="seller-active-count">0</strong><span>Produtos ativos</span></div>
+            </div>
+            <form id="seller-profile-form" class="form-grid profile-form">
+              <label>Nome da loja<input id="seller-store-name" name="store_name" minlength="2" maxlength="120" placeholder="Ex.: Casa e Cia" required></label>
+              <label>Descrição da loja<textarea id="seller-store-description" name="store_description" minlength="2" maxlength="1000" placeholder="Conte em poucas palavras o que sua loja oferece." required></textarea></label>
+              <label>Telefone comercial <span class="optional-label">Opcional</span><input id="seller-business-phone" name="business_phone" type="tel" autocomplete="tel" maxlength="30" placeholder="+55 (11) 99999-9999"></label>
+              <div class="form-actions">
+                <button class="button button-dark" type="submit">Salvar dados da loja</button>
+                <button class="button button-quiet" type="button" data-profile-view="manage">Gerenciar produtos</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel profile-panel" id="client-profile-card" hidden>
+            <div class="panel-heading">
+              <div><p class="eyebrow">Sua experiência</p><h3>Compras e sacola</h3></div>
+            </div>
+            <div class="profile-stats">
+              <div><strong id="client-order-count">0</strong><span>Pedidos registrados</span></div>
+              <div><strong id="client-cart-count">0</strong><span>Itens na sacola</span></div>
+            </div>
+            <div class="form-actions">
+              <button class="button button-dark" type="button" data-profile-view="orders">Ver meus pedidos</button>
+              <button class="button button-quiet" type="button" id="profile-open-cart">Abrir sacola</button>
+            </div>
+          </section>
+
+          <section class="panel profile-panel">
+            <div class="panel-heading">
+              <div><p class="eyebrow">Acesso seguro</p><h3>Alterar senha</h3></div>
+            </div>
+            <form id="password-form" class="form-grid profile-form">
+              <label>Senha atual<input name="current_password" type="password" autocomplete="current-password" placeholder="Digite sua senha atual" required></label>
+              <label>Nova senha<input id="new-password" name="new_password" type="password" autocomplete="new-password" minlength="12" maxlength="128" placeholder="Mínimo 12 caracteres, com letra maiúscula, minúscula e número" required></label>
+              <label>Confirme a nova senha<input id="confirm-new-password" name="confirm_password" type="password" autocomplete="new-password" minlength="12" maxlength="128" placeholder="Digite novamente a nova senha" required></label>
+              <button class="button button-dark" type="submit">Atualizar senha</button>
+            </form>
+          </section>
+          <div class="profile-footer">
+            <p>Seus dados são privados e visíveis somente para você.</p>
+            <button class="button button-quiet" id="profile-logout" type="button">Sair da conta</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="view section-wrap subpage" id="manage-view" hidden>
+        <div class="section-heading">
+          <div><p class="eyebrow">Espaço do vendedor</p><h2>Gerenciar catálogo</h2></div>
+          <p class="section-note">Sua vitrine Linx, organizada do seu jeito.</p>
+        </div>
+        <div class="manage-grid">
+          <section class="panel">
+            <div class="panel-heading"><div><p class="eyebrow">Catálogo</p><h3 id="product-form-title">Novo produto</h3></div></div>
+            <p class="form-help">Preencha as informações que os clientes verão na sua vitrine.</p>
+            <form id="product-form" class="form-grid">
+              <label>Nome do produto<input id="product-name" name="name" required maxlength="120" placeholder="Ex.: Caneca de cerâmica"></label>
+              <label>Descrição<textarea id="product-description" name="description" required maxlength="2000" placeholder="Descreva os detalhes e diferenciais do produto."></textarea></label>
+              <label>Categoria<select id="product-category" name="category" required>
+                <option value="">Selecione uma categoria</option>
+              </select></label>
+              <div class="form-row">
+                <label>Preço<input id="product-price" name="price" type="number" min="0.01" step="0.01" required placeholder="0,00" inputmode="decimal"></label>
+                <label>Estoque<input id="product-stock" name="stock" type="number" min="0" max="1000000" step="1" required placeholder="Ex.: 12" inputmode="numeric"></label>
+              </div>
+              <label>Imagem <span class="optional-label">Opcional</span><input id="product-image" name="image_url" type="text" inputmode="url" maxlength="2048" autocomplete="url" placeholder="https://exemplo.com/imagem.jpg ou /imagens/produto.jpg"></label>
+              <label>Status<select id="product-status" name="status">
+                <option value="active">Ativo</option>
+                <option value="inactive">Inativo</option>
+              </select></label>
+              <div class="form-actions">
+                <button class="button button-dark" id="product-submit" type="submit">Cadastrar produto</button>
+                <button class="button button-quiet" id="cancel-edit" type="button" hidden>Cancelar edição</button>
+              </div>
+            </form>
+          </section>
+          <section class="panel category-panel">
+            <div class="panel-heading"><div><p class="eyebrow">Organização</p><h3 id="category-form-title">Categorias</h3></div></div>
+            <p class="form-help">Organize seus produtos em categorias para facilitar a busca.</p>
+            <form id="category-form" class="inline-form">
+              <label>Nome da categoria<input id="category-name" required maxlength="80" placeholder="Ex.: Casa e decoração"></label>
+              <label>Descrição <span class="optional-label">Opcional</span><input id="category-description" maxlength="500" placeholder="Uma breve descrição"></label>
+              <div class="form-actions">
+                <button class="button button-dark" id="category-submit" type="submit">Adicionar</button>
+                <button class="button button-quiet" id="category-cancel" type="button" hidden>Cancelar edição</button>
+              </div>
+            </form>
+            <ul class="category-admin-list" id="category-admin-list"></ul>
+          </section>
+        </div>
+        <section class="panel product-admin-panel">
+          <div class="panel-heading"><div><p class="eyebrow">Registros</p><h3>Produtos cadastrados</h3></div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th>Status</th><th>Ações</th></tr></thead>
+              <tbody id="product-admin-list"></tbody>
+            </table>
+            <p class="empty-state table-empty" id="product-admin-empty" hidden>Você ainda não cadastrou produtos. Use o formulário acima para adicionar seu primeiro item.</p>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a class="brand footer-brand" href="/" aria-label="Linx, início"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 36 36"><path d="M12 12 24 24M24 12 12 24"></path></svg></span><span class="brand-wordmark">Linx<span class="brand-dot">.</span></span></a>
+      <p>Praticidade e boas escolhas para todos os dias.</p>
+      <span>Linx · loja demonstrativa</span>
+    </footer>
+
+    <dialog class="drawer" id="cart-dialog" aria-labelledby="cart-title">
+      <div class="drawer-header">
+        <div><p class="eyebrow">Sua seleção</p><h2 id="cart-title">Sacola</h2></div>
+        <button class="icon-button" data-close="cart-dialog" aria-label="Fechar sacola">×</button>
+      </div>
+      <div class="cart-items" id="cart-items"></div>
+      <div class="cart-summary">
+        <div class="summary-row"><span>Itens</span><span id="cart-total-items">0</span></div>
+        <div class="summary-row summary-total"><span>Total</span><strong id="cart-total">R$ 0,00</strong></div>
+        <button class="button button-dark checkout-button" id="checkout-button" type="button">Finalizar pedido <span aria-hidden="true">→</span></button>
+        <p class="checkout-note">Finalização simulada para fins acadêmicos. O estoque é confirmado no pedido.</p>
+      </div>
+    </dialog>
+
+    <dialog class="product-dialog" id="product-dialog">
+      <button class="icon-button dialog-close" data-close="product-dialog" aria-label="Fechar detalhes">×</button>
+      <div id="product-detail-content"></div>
+    </dialog>
+
+    <dialog class="product-dialog auth-dialog" id="login-dialog">
+      <button class="icon-button dialog-close" data-close="login-dialog" aria-label="Fechar login">×</button>
+      <div class="section-heading"><div><p class="eyebrow">Boas-vindas à Linx</p><h2>Entre na sua conta</h2></div></div>
+      <form id="login-form" class="form-grid auth-form">
+        <p class="form-help">Entre com o e-mail e a senha usados no cadastro.</p>
+        <label>E-mail<input name="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" required></label>
+        <label>Senha<input name="password" type="password" autocomplete="current-password" placeholder="Sua senha" required></label>
+        <button class="button button-dark" type="submit">Entrar</button>
+      </form>
+    </dialog>
+
+    <dialog class="product-dialog auth-dialog" id="register-dialog">
+      <button class="icon-button dialog-close" data-close="register-dialog" aria-label="Fechar cadastro">×</button>
+      <div class="section-heading"><div><p class="eyebrow">Sua jornada Linx começa aqui</p><h2>Escolha seu tipo de conta</h2></div></div>
+      <form id="register-form" class="form-grid auth-form">
+        <fieldset class="account-type-fieldset">
+          <legend>Como você quer usar a Linx?</legend>
+          <div class="account-type-options">
+            <label class="account-type-card selected" for="register-role-client">
+              <input id="register-role-client" type="radio" name="role" value="client" checked>
+              <span class="account-type-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 8h16l-1 12H5L4 8Z"></path><path d="M8 9V6a4 4 0 0 1 8 0v3"></path></svg></span>
+              <span><strong>Quero comprar</strong><small>Explore produtos e acompanhe seus pedidos.</small></span>
+            </label>
+            <label class="account-type-card" for="register-role-seller">
+              <input id="register-role-seller" type="radio" name="role" value="seller">
+              <span class="account-type-icon seller-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10h16v10H4zM3 10l2-6h14l2 6M8 20v-6h8v6M8 7h.01M12 7h.01M16 7h.01"></path></svg></span>
+              <span><strong>Quero vender</strong><small>Crie sua vitrine e anuncie seus produtos.</small></span>
+            </label>
+          </div>
+        </fieldset>
+        <p class="form-help">Campos marcados como obrigatórios precisam ser preenchidos. Use uma senha com pelo menos 12 caracteres, incluindo maiúscula, minúscula e número.</p>
+        <label>Nome completo<input name="full_name" autocomplete="name" minlength="2" maxlength="120" placeholder="Ex.: Ana da Silva" required></label>
+        <label>E-mail<input name="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" required></label>
+        <label>Senha<input id="register-password" name="password" type="password" autocomplete="new-password" minlength="12" maxlength="128" placeholder="Mínimo 12 caracteres" required></label>
+        <label>Confirme sua senha<input id="register-confirm-password" name="confirm_password" type="password" autocomplete="new-password" minlength="12" maxlength="128" placeholder="Digite novamente sua senha" required></label>
+        <div class="seller-registration-fields" id="seller-registration-fields" hidden>
+          <p class="eyebrow">Sobre sua loja</p>
+          <label>Nome da loja<input id="register-store-name" name="store_name" minlength="2" maxlength="120" placeholder="Ex.: Casa e Cia" disabled></label>
+            <label>Descrição da loja<textarea id="register-store-description" name="store_description" minlength="2" maxlength="1000" placeholder="Conte o que sua loja oferece." disabled></textarea></label>
+          <label>Telefone comercial <span class="optional-label">Opcional</span><input id="register-business-phone" name="business_phone" type="tel" autocomplete="tel" maxlength="30" placeholder="+55 (11) 99999-9999" disabled></label>
+        </div>
+        <button class="button button-dark" id="register-submit" type="submit">Criar conta de cliente</button>
+      </form>
+    </dialog>
+  </body>
+</html>

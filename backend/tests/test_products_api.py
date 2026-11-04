@@ -71,11 +71,18 @@ async def _exercise_product_crud(redis_settings: Settings) -> None:
                     params={
                         "search": product_data["name"],
                         "category": product_data["category"],
+                        "seller_id": seller.id,
                     },
                 )
                 assert listing.status_code == 200
                 assert listing.json()["total"] == 1
                 assert listing.json()["items"][0]["id"] == product_id
+                sellers = await client.get("/api/v1/auth/sellers")
+                assert sellers.status_code == 200
+                assert {
+                    "id": seller.id,
+                    "name": seller.user.store_name or seller.user.full_name,
+                } in sellers.json()
 
                 rename_category = await client.put(
                     f"/api/v1/categories/{category_ids[0]}",

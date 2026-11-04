@@ -5,7 +5,13 @@ from uuid import uuid4
 
 from redis.asyncio import Redis
 
-from backend.app.schemas.user import UserCredentials, UserRead, UserRole, UserStatus
+from backend.app.schemas.user import (
+    SellerOption,
+    UserCredentials,
+    UserRead,
+    UserRole,
+    UserStatus,
+)
 
 CREATE_USER_SCRIPT = """
 if redis.call('HEXISTS', KEYS[2], ARGV[3]) == 1 then
@@ -171,6 +177,31 @@ class UserRepository:
         normalized_email = self.normalize_email(email)
         user_id = await self.redis.hget(self.email_index_key, normalized_email)
         return await self.get(user_id) if user_id else None
+
+    async def list_sellers(self) -> list[SellerOption]:
+        user_ids = sorted(
+            await self.redis.smembers(self.role_index_key(UserRole.SELLER))
+        )
+        if not user_ids:
+            return []
+
+        pipeline = self.redis.pipeline(transaction=False)
+        for user_id in user_ids:
+            pipeline.hgetall(self.user_key(user_id))
+        records = await pipeline.execute()
+        sellers = []
+        for record in records:
+            if not record:
+                continue
+            user = self._to_user(record)
+            if user.status is UserStatus.ACTIVE:
+                sellers.append(
+                    SellerOption(
+                        id=user.id,
+                        name=user.store_name or user.full_name,
+                    )
+                )
+        return sorted(sellers, key=lambda seller: seller.name.casefold())
 
     async def create_session(self, user_id: str, ttl_seconds: int) -> str:
         for _ in range(3):

@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, Request, Response, status
 from redis.asyncio import Redis
@@ -50,6 +51,7 @@ async def list_products(
     service: Annotated[ProductService, Depends(get_product_service)],
     search: Annotated[str | None, Query(max_length=120)] = None,
     category: Annotated[str | None, Query(max_length=80)] = None,
+    seller_id: UUID | None = None,
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
     offset: Annotated[int, Query(ge=0)] = 0,
 ) -> ProductPage:
@@ -57,6 +59,7 @@ async def list_products(
         search=search,
         category=category,
         seller_id=None,
+        seller_filter_id=str(seller_id) if seller_id else None,
         limit=limit,
         offset=offset,
     )
@@ -76,6 +79,7 @@ async def list_my_products(
         search=search,
         category=category,
         seller_id=str(seller.id),
+        seller_filter_id=None,
         limit=limit,
         offset=offset,
     )

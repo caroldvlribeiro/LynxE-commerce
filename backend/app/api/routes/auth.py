@@ -13,6 +13,7 @@ from backend.app.db.redis import get_redis
 from backend.app.repositories.user_repository import UserRepository
 from backend.app.schemas.user import (
     PasswordChange,
+    SellerOption,
     SellerProfileUpdate,
     UserLogin,
     UserProfileUpdate,
@@ -92,6 +93,13 @@ async def logout(
 @router.get("/me", response_model=UserRead)
 async def get_me(user: CurrentUser) -> UserRead:
     return user
+
+
+@router.get("/sellers", response_model=list[SellerOption])
+async def list_sellers(
+    service: Annotated[AuthService, Depends(get_auth_service)],
+) -> list[SellerOption]:
+    return await service.list_sellers()
 
 
 @router.patch("/profile", response_model=UserRead)

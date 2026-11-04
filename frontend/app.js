@@ -1,6 +1,7 @@
 const API = "/api/v1";
 const state = {
   categories: [],
+  sellers: [],
   products: [],
   sellerProducts: [],
   cart: null,
@@ -22,6 +23,7 @@ const elements = {
   catalogEmpty: document.querySelector("#catalog-empty"),
   search: document.querySelector("#search-input"),
   categoryFilter: document.querySelector("#category-filter"),
+  sellerFilter: document.querySelector("#seller-filter"),
   cartCount: document.querySelector("#cart-count"),
   cartDialog: document.querySelector("#cart-dialog"),
   cartItems: document.querySelector("#cart-items"),
@@ -373,12 +375,31 @@ function renderCategoryOptions() {
   }
 }
 
+function renderSellerOptions() {
+  const selectedFilter = elements.sellerFilter.value;
+  const options = state.sellers
+    .map((seller) => `<option value="${escapeHtml(seller.id)}">${escapeHtml(seller.name)}</option>`)
+    .join("");
+  elements.sellerFilter.innerHTML = `<option value="">Todos</option>${options}`;
+  if (state.sellers.some((seller) => seller.id === selectedFilter)) {
+    elements.sellerFilter.value = selectedFilter;
+  }
+}
+
+async function loadSellers() {
+  const response = await api("/auth/sellers");
+  state.sellers = response;
+  renderSellerOptions();
+}
+
 async function loadProducts(useCatalogFilters = true) {
   const params = new URLSearchParams({ limit: "100" });
   const search = elements.search.value.trim();
   const category = elements.categoryFilter.value;
+  const sellerId = elements.sellerFilter.value;
   if (useCatalogFilters && search) params.set("search", search);
   if (useCatalogFilters && category) params.set("category", category);
+  if (useCatalogFilters && sellerId) params.set("seller_id", sellerId);
   const endpoint = useCatalogFilters ? "/products" : "/products/mine";
   if (useCatalogFilters && state.products.length === 0) {
     elements.grid.setAttribute("aria-busy", "true");
@@ -400,6 +421,14 @@ async function loadProducts(useCatalogFilters = true) {
   }
 }
 
+function updateClearCatalogFiltersVisibility() {
+  elements.clearCatalogFilters.hidden = !(
+    elements.search.value.trim()
+    || elements.categoryFilter.value
+    || elements.sellerFilter.value
+  );
+}
+
 async function reloadSellerAndCatalog() {
   await loadProducts(false);
   await loadProducts();
@@ -415,7 +444,7 @@ function renderProducts() {
     const available = product.status === "active" && product.stock > 0;
     const canBuy = state.user?.role === "client";
     return `
-      <article class="product-card">
+      <article class="product-card" data-product-id="${escapeHtml(product.id)}" tabindex="0" aria-label="Ver detalhes de ${escapeHtml(product.name)}">
         <div class="product-image-wrap">
           ${imageMarkup}
           ${available && canBuy ? `<button class="quick-add" type="button" data-add="${escapeHtml(product.id)}" aria-label="Adicionar ${escapeHtml(product.name)} à sacola">+</button>` : ""}
@@ -423,7 +452,7 @@ function renderProducts() {
         <div class="product-meta">
           <div>
             <p class="product-category">${escapeHtml(product.category)}</p>
-            <button class="product-name text-button" data-details="${escapeHtml(product.id)}" type="button">${escapeHtml(product.name)}</button>
+            <span class="product-name">${escapeHtml(product.name)}</span>
           </div>
           <p class="product-price">${money(product.price)}</p>
         </div>
@@ -682,23 +711,46 @@ document.querySelectorAll("[data-close]").forEach((button) => {
 document.querySelector("#open-cart").addEventListener("click", () => elements.cartDialog.showModal());
 
 elements.search.addEventListener("input", () => {
+  updateClearCatalogFiltersVisibility();
   clearTimeout(elements.searchTimer);
   elements.searchTimer = setTimeout(() => run(loadProducts), 220);
 });
-elements.categoryFilter.addEventListener("change", () => run(loadProducts));
+elements.categoryFilter.addEventListener("change", () => {
+  updateClearCatalogFiltersVisibility();
+  run(loadProducts);
+});
+elements.sellerFilter.addEventListener("change", () => {
+  updateClearCatalogFiltersVisibility();
+  run(loadProducts);
+});
 elements.clearCatalogFilters.addEventListener("click", () => {
   clearTimeout(elements.searchTimer);
   elements.search.value = "";
   elements.categoryFilter.value = "";
+  elements.sellerFilter.value = "";
+  updateClearCatalogFiltersVisibility();
   elements.search.focus({ preventScroll: true });
   run(loadProducts);
 });
 
 elements.grid.addEventListener("click", (event) => {
   const addButton = event.target.closest("[data-add]");
-  const detailButton = event.target.closest("[data-details]");
-  if (addButton) run(() => addToCart(addButton.dataset.add), addButton, "Adicionando...");
-  if (detailButton) showProductDetails(detailButton.dataset.details, detailButton);
+  if (addButton) {
+    run(() => addToCart(addButton.dataset.add), addButton, "Adicionando...");
+    return;
+  }
+  const productCard = event.target.closest(".product-card[data-product-id]");
+  if (productCard) showProductDetails(productCard.dataset.productId, productCard);
+});
+elements.grid.addEventListener("keydown", (event) => {
+  const productCard = event.target.closest(".product-card[data-product-id]");
+  if (
+    !productCard
+    || event.target !== productCard
+    || (event.key !== "Enter" && event.key !== " ")
+  ) return;
+  event.preventDefault();
+  showProductDetails(productCard.dataset.productId, productCard);
 });
 
 elements.productDetail.addEventListener("click", (event) => {
@@ -956,6 +1008,7 @@ elements.sellerProfileForm.addEventListener("submit", (event) => {
     });
     applyUser(user);
     renderProfile();
+    await loadSellers();
     showNotice("Os dados da sua loja foram atualizados.");
   }, event.submitter || elements.sellerProfileForm.querySelector('[type="submit"]'), "Salvando...");
 });
@@ -1063,7 +1116,7 @@ elements.registerForm.addEventListener("submit", (event) => {
     elements.registerForm.reset();
     updateRegistrationRole();
     await loadCategories();
-    await Promise.all([loadProducts(), loadCart()]);
+    await Promise.all([loadProducts(), loadCart(), loadSellers()]);
     showNotice(`Conta criada. Boas-vindas à Linx, ${user.full_name}.`);
   }, event.submitter || elements.registerSubmit, "Criando conta...");
 });
@@ -1077,7 +1130,7 @@ async function initialize() {
       applyUser(null);
     }
     await loadCategories();
-    await Promise.all([loadProducts(), loadCart()]);
+    await Promise.all([loadProducts(), loadCart(), loadSellers()]);
   } catch (error) {
     showNotice(`Não foi possível carregar a loja: ${error.message}`, true);
   }

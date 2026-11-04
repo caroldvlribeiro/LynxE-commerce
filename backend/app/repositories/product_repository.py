@@ -164,6 +164,7 @@ class ProductRepository:
         search: str | None,
         category: str | None,
         seller_id: str | None,
+        seller_filter_id: str | None,
         limit: int,
         offset: int,
     ) -> tuple[list[ProductRead], int]:
@@ -188,6 +189,10 @@ class ProductRepository:
                 str(product.seller_id) == seller_id
                 if seller_id is not None
                 else product.status is ProductStatus.ACTIVE
+            )
+            and (
+                seller_filter_id is None
+                or str(product.seller_id) == seller_filter_id
             )
             and (
                 normalized_search is None

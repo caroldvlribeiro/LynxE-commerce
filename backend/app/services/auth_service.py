@@ -6,6 +6,7 @@ from backend.app.repositories.user_repository import UserRepository
 from backend.app.schemas.user import (
     UserCredentials,
     UserRead,
+    SellerOption,
     UserProfileUpdate,
     UserRegistration,
     SellerProfileUpdate,
@@ -151,6 +152,9 @@ class AuthService:
     async def logout(self, token: str | None) -> None:
         if token:
             await self.repository.delete_session(token)
+
+    async def list_sellers(self) -> list[SellerOption]:
+        return await self.repository.list_sellers()
 
     @staticmethod
     def _verify_password(password: str, user: UserCredentials) -> bool:

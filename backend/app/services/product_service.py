@@ -62,6 +62,7 @@ class ProductService:
         search: str | None,
         category: str | None,
         seller_id: str | None,
+        seller_filter_id: str | None,
         limit: int,
         offset: int,
     ) -> tuple[list[ProductRead], int]:
@@ -69,6 +70,7 @@ class ProductService:
             search=search,
             category=category,
             seller_id=seller_id,
+            seller_filter_id=seller_filter_id,
             limit=limit,
             offset=offset,
         )

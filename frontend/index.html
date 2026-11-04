@@ -7,8 +7,8 @@
     <meta name="description" content="Linx: praticidade e boas escolhas para acompanhar a sua rotina.">
     <title>Linx — boas escolhas para o seu dia</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="stylesheet" href="/styles.css?v=linx-dialog-1">
-    <script src="/app.js?v=linx-scroll-1" defer></script>
+    <link rel="stylesheet" href="/styles.css?v=linx-dialog-4">
+    <script src="/app.js?v=linx-scroll-4" defer></script>
   </head>
   <body>
     <header class="site-header" id="site-header">
@@ -74,12 +74,16 @@
             <select id="category-filter">
               <option value="">Todas</option>
             </select>
+            <label class="filter-label" for="seller-filter">Vendedor</label>
+            <select id="seller-filter">
+              <option value="">Todos</option>
+            </select>
+            <button class="button button-quiet" id="clear-catalog-filters" type="button" hidden>Limpar filtros</button>
           </div>
           <p class="catalog-feedback" id="catalog-feedback" role="status" aria-live="polite"></p>
           <div class="product-grid" id="product-grid" aria-live="polite" aria-busy="false"></div>
           <div class="empty-state" id="catalog-empty" hidden>
             <p>Nenhum produto encontrado com esses filtros.</p>
-            <button class="button button-quiet" id="clear-catalog-filters" type="button">Limpar busca e filtros</button>
           </div>
         </section>
 

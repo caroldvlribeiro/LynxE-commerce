@@ -169,5 +169,10 @@ class UserRead(BaseModel):
     business_phone: str | None = None
 
 
+class SellerOption(BaseModel):
+    id: UUID
+    name: str
+
+
 class UserCredentials(UserRead):
     password_hash: str
